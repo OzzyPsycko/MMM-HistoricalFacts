@@ -8,27 +8,26 @@ module.exports = NodeHelper.create({
 
   socketNotificationReceived: function(notification, payload) {
     if (notification === "START_FETCHING_FACTS") {
-      this.fetchFact(payload);
+      this.fetchFacts(payload);
     }
   },
 
-  fetchFact: function(config) {
+  fetchFacts: function(config) {
     const self = this;
     const parser = new Parser();
 
     parser.parseURL(config.rssFeedUrl)
       .then(function(feed) {
-        const fact = self.extractFactFromRSS(feed);
-        self.sendSocketNotification("FACT_FETCHED", fact);
-        self.scheduleNextFetch(config.updateInterval);
+        const facts = self.extractFactsFromRSS(feed);
+        self.sendSocketNotification("FACT_FETCHED", facts);
       })
       .catch(function(error) {
-        console.error("Failed to fetch historical fact: " + error);
-        self.scheduleNextFetch(config.updateInterval);
+        console.error("Failed to fetch historical facts: " + error);
       });
   },
 
-  extractFactFromRSS: function(feed) {
+  extractFactsFromRSS: function(feed) {
+    const facts = [];
     const today = new Date();
     const date = `${today.getMonth() + 1}/${today.getDate()}`;
 
@@ -37,17 +36,10 @@ module.exports = NodeHelper.create({
       const itemDate = `${pubDate.getMonth() + 1}/${pubDate.getDate()}`;
 
       if (itemDate === date) {
-        return item.title;
+        facts.push(item.title);
       }
     }
 
-    return "No historical fact found for today.";
-  },
-
-  scheduleNextFetch: function(updateInterval) {
-    const self = this;
-    setTimeout(function() {
-      self.fetchFact();
-    }, updateInterval);
+    return facts;
   },
 });
