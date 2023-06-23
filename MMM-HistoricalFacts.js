@@ -2,12 +2,13 @@ Module.register("MMM-HistoricalFacts", {
   // Module configuration options
   defaults: {
     updateInterval: 2 * 60 * 1000, // 2 minutes
+    rssFeedUrl: "https://example.com/on-this-day/rss",
   },
 
   // Define start sequence.
   start: function() {
     Log.info("Starting module: " + this.name);
-    this.sendSocketNotification("START_FETCHING_FACTS");
+    this.sendSocketNotification("START_FETCHING_FACTS", this.config);
   },
 
   // Override the dom generator.
