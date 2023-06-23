@@ -1,7 +1,7 @@
 Module.register("MMM-HistoricalFacts", {
   // Module configuration options
   defaults: {
-    updateInterval: 2 * 60 * 1000, // 2 minutes
+    updateInterval: 1 * 60 * 1000, // 1 minute
     rssFeedUrl: "http://feeds.feedburner.com/historyorb/todayinhistory",
   },
 
