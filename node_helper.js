@@ -1,50 +1,53 @@
 const NodeHelper = require("node_helper");
-const axios = require("axios");
-const cheerio = require("cheerio");
+const Parser = require("rss-parser");
 
 module.exports = NodeHelper.create({
   start: function() {
     console.log("Starting node_helper for module [" + this.name + "]");
   },
 
-  // Handle socket notifications.
-  socketNotificationReceived: function(notification) {
+  socketNotificationReceived: function(notification, payload) {
     if (notification === "START_FETCHING_FACTS") {
-      this.fetchFact();
+      this.fetchFact(payload);
     }
   },
 
-  // Fetch a historical fact from Britannica.
-  fetchFact: function() {
+  fetchFact: function(config) {
     const self = this;
-    const today = new Date();
-    const date = `${today.getMonth() + 1}/${today.getDate()}`;
+    const parser = new Parser();
 
-    axios
-      .get(`https://www.britannica.com/on-this-day/${date}`)
-      .then(function(response) {
-        const fact = self.extractFactFromHTML(response.data);
+    parser.parseURL(config.rssFeedUrl)
+      .then(function(feed) {
+        const fact = self.extractFactFromRSS(feed);
         self.sendSocketNotification("FACT_FETCHED", fact);
-        self.scheduleNextFetch();
+        self.scheduleNextFetch(config.updateInterval);
       })
       .catch(function(error) {
         console.error("Failed to fetch historical fact: " + error);
-        self.scheduleNextFetch();
+        self.scheduleNextFetch(config.updateInterval);
       });
   },
 
-  // Extract the fact from the Britannica HTML.
-  extractFactFromHTML: function(html) {
-    const $ = cheerio.load(html);
-    const factElement = $(".fact-module-text");
-    return factElement.text().trim();
+  extractFactFromRSS: function(feed) {
+    const today = new Date();
+    const date = `${today.getMonth() + 1}/${today.getDate()}`;
+
+    for (const item of feed.items) {
+      const pubDate = new Date(item.pubDate);
+      const itemDate = `${pubDate.getMonth() + 1}/${pubDate.getDate()}`;
+
+      if (itemDate === date) {
+        return item.title;
+      }
+    }
+
+    return "No historical fact found for today.";
   },
 
-  // Schedule the next fetch after the specified interval.
-  scheduleNextFetch: function() {
+  scheduleNextFetch: function(updateInterval) {
     const self = this;
     setTimeout(function() {
       self.fetchFact();
-    }, this.config.updateInterval);
+    }, updateInterval);
   },
 });
