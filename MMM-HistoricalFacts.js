@@ -1,7 +1,7 @@
 Module.register("MMM-HistoricalFacts", {
   // Module configuration options
   defaults: {
-    updateInterval: 1 * 60 * 1000, // 1 minute
+    updateInterval: 2 * 60 * 1000, // 2 minutes
     rssFeedUrl: "http://feeds.feedburner.com/historyorb/todayinhistory",
   },
 
@@ -22,8 +22,24 @@ Module.register("MMM-HistoricalFacts", {
   // Handle incoming socket notifications.
   socketNotificationReceived: function(notification, payload) {
     if (notification === "FACT_FETCHED") {
-      this.fact = payload;
-      this.updateDom();
+      this.showFactsSequentially(payload);
     }
+  },
+
+  showFactsSequentially: function(facts) {
+    var self = this;
+    var index = 0;
+
+    function showNextFact() {
+      self.fact = facts[index];
+      self.updateDom();
+
+      index++;
+      if (index < facts.length) {
+        setTimeout(showNextFact, 1 * 60 * 1000); // 1 minute delay between facts
+      }
+    }
+
+    showNextFact();
   },
 });
