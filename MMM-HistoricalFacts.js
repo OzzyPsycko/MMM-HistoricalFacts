@@ -1,7 +1,7 @@
 /* Magic Mirror
-    * Module: MMM-History
+    * Module: MMM-HistoricalFacts
     *
-    * By cowboysdude
+    * By OzzyPsycko
     * 
     */
    
@@ -39,21 +39,21 @@ Module.register("MMM-HistoricalFacts", {
            // Set locale.
            this.locale = window.navigator.userLanguage || window.navigator.language;
            this.url = "http://feeds.feedburner.com/historyorb/todayinhistory";
-           this.history = {};
+           this.HistoricalFacts = {};
            this.today = "";
            this.activeItem = 0;
            this.rotateInterval = null;
            this.scheduleUpdate();
        },
        
-       processHistory: function(data) {
+       processHistoricalFacts: function(data) {
          this.today = data.Today;
-         this.history = data;
+         this.HistoricalFacts = data;
          this.loaded = true;
      },
      
       scheduleCarousel: function() {
-       		console.log("Scheduling History items");
+       		console.log("Scheduling HistoricalFacts items");
 	   		this.rotateInterval = setInterval(() => {
 				this.activeItem++;
 				this.updateDom(this.config.animationSpeed);
@@ -62,19 +62,19 @@ Module.register("MMM-HistoricalFacts", {
      
      scheduleUpdate: function() {
          setInterval(() => {
-             this.getHistory();
+             this.getHistoricalFacts();
          }, this.config.updateInterval);
-         this.getHistory(this.config.initialLoadDelay);
+         this.getHistoryicalFacts(this.config.initialLoadDelay);
          var self = this;
      },
 
-     getHistory: function() {
-         this.sendSocketNotification('GET_HISTORY', this.url);
+     getHistoricalFacts: function() {
+         this.sendSocketNotification('GET_HISTORICALFACTS', this.url);
      },
 
      socketNotificationReceived: function(notification, payload) {
-         if (notification === "HISTORY_RESULT") {
-             this.processHistory(payload);
+         if (notification === "HISTORICALFACTS_RESULT") {
+             this.processHistoricalFacts(payload);
              if(this.rotateInterval == null){
 			   	this.scheduleCarousel();
 			   }
@@ -85,7 +85,7 @@ Module.register("MMM-HistoricalFacts", {
 
       getDom: function() {
          
-         var history = this.history;
+         var HistoricalFacts = this.HistoricalFacts;
          moment.locale(this.locale);
 
          var wrapper = document.createElement("div");
@@ -97,22 +97,22 @@ Module.register("MMM-HistoricalFacts", {
          header.innerHTML = "Today in History  " + moment().format('L');
          wrapper.appendChild(header);
          
-          var hkeys = Object.keys(this.history);
+          var hkeys = Object.keys(this.HistoricalFacts);
 			if(hkeys.length > 0){
            	if(this.activeItem >= hkeys.length){
 				this.activeItem = 0;
 			}
-         var history = this.history[hkeys[this.activeItem]];
+         var history = this.HistoricalFacts[hkeys[this.activeItem]];
 
          var top = document.createElement("div");
          top.classList.add("content");
 
          var hitem = document.createElement("p");
          hitem.classList.add("xsmall", "bright", "title");
-		 if (this.config.maxLength && this.config.maxLength < history.title.toString().length) {
-			hitem.innerHTML = history.title.toString().substring(0, this.config.maxLength) + "\u2026";			 
+		 if (this.config.maxLength && this.config.maxLength < HistoricalFacts.title.toString().length) {
+			hitem.innerHTML = HistoricalFacts.title.toString().substring(0, this.config.maxLength) + "\u2026";			 
 		 } else {
-			hitem.innerHTML = history.title;
+			hitem.innerHTML = HistoricalFacts.title;
 		}
          top.appendChild(hitem);
 
