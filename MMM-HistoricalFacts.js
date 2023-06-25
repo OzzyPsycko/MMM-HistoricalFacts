@@ -64,7 +64,7 @@ Module.register("MMM-HistoricalFacts", {
          setInterval(() => {
              this.getHistoricalFacts();
          }, this.config.updateInterval);
-         this.getHistoryicalFacts(this.config.initialLoadDelay);
+         this.getHistoricalFacts(this.config.initialLoadDelay);
          var self = this;
      },
 
