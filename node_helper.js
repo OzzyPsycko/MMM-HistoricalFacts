@@ -1,7 +1,7 @@
 /* Magic Mirror
-    * Module: MMM-History
+    * Module: MMM-HistoricalFacts
     *
-    * By Cowboysdude
+    * By OzzyPsycko
     * 
     */
 const NodeHelper = require('node_helper');
@@ -23,7 +23,7 @@ module.exports = NodeHelper.create({
                 parser(body, (err, result)=> {
                     if(result.hasOwnProperty('rss')){
                         var result = JSON.parse(JSON.stringify(result.rss.channel[0].item));
-                        this.sendSocketNotification("HISTORY_RESULT", result);
+                        this.sendSocketNotification("HISTORICALFACTS_RESULT", result);
                     }
                 });
             }
@@ -32,8 +32,8 @@ module.exports = NodeHelper.create({
 
     //Subclass socketNotificationReceived received.
     socketNotificationReceived: function(notification, payload) {
-        if (notification === 'GET_HISTORY') {
-                this.getHistory(payload);
+        if (notification === 'GET_HISTORICALFACTS') {
+                this.getHistoricalFacts(payload);
             }
          }  
     });
