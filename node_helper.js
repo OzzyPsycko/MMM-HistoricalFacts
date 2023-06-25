@@ -1,45 +1,39 @@
-const NodeHelper = require("node_helper");
-const Parser = require("rss-parser");
+/* Magic Mirror
+    * Module: MMM-History
+    *
+    * By Cowboysdude
+    * 
+    */
+const NodeHelper = require('node_helper');
+const request = require('request');
+const parser = require('xml2js').parseString;
 
 module.exports = NodeHelper.create({
-  start: function() {
-    console.log("Starting node_helper for module [" + this.name + "]");
-  },
+	  
+    start: function() {
+    	console.log("Starting module: " + this.name);
+    },
+    
+    getHistory: function(url) {
+    	request({ 
+    	          url: url,
+    	          method: 'GET' 
+    	        }, (error, response, body) => {
+            if (!error && response.statusCode === 200) {
+                parser(body, (err, result)=> {
+                    if(result.hasOwnProperty('rss')){
+                        var result = JSON.parse(JSON.stringify(result.rss.channel[0].item));
+                        this.sendSocketNotification("HISTORY_RESULT", result);
+                    }
+                });
+            }
+       });
+    },
 
-  socketNotificationReceived: function(notification, payload) {
-    if (notification === "START_FETCHING_FACTS") {
-      this.fetchFacts(payload);
-    }
-  },
-
-  fetchFacts: function(config) {
-    const self = this;
-    const parser = new Parser();
-
-    parser.parseURL(config.rssFeedUrl)
-      .then(function(feed) {
-        const facts = self.extractFactsFromRSS(feed);
-        self.sendSocketNotification("FACT_FETCHED", facts);
-      })
-      .catch(function(error) {
-        console.error("Failed to fetch historical facts: " + error);
-      });
-  },
-
-  extractFactsFromRSS: function(feed) {
-    const facts = [];
-    const today = new Date();
-    const date = `${today.getMonth() + 1}/${today.getDate()}`;
-
-    for (const item of feed.items) {
-      const pubDate = new Date(item.pubDate);
-      const itemDate = `${pubDate.getMonth() + 1}/${pubDate.getDate()}`;
-
-      if (itemDate === date) {
-        facts.push(item.title);
-      }
-    }
-
-    return facts;
-  },
-});
+    //Subclass socketNotificationReceived received.
+    socketNotificationReceived: function(notification, payload) {
+        if (notification === 'GET_HISTORY') {
+                this.getHistory(payload);
+            }
+         }  
+    });
