@@ -1,8 +1,8 @@
 {
-  "name": "mmm-history",
+  "name": "mmm-historicalfacts",
   "version": "1.0.0",
   "description": "This day in History module for MM2",
-  "main": "MMM-History.js",
+  "main": "MMM-HistoricalFacts.js",
   "dependencies": {
     "request": "^2.79.0",
     "xml2js": "^0.4.17"
@@ -12,12 +12,12 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/cowboysdude/MMM-History.git"
+    "url": "git+https://github.com/OzzyPsycko/MMM-HistoricalFacts.git"
   },
-  "author": "Cowboysdude",
+  "author": "OzzyPsycko",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/cowboysdude/MMM-History/issues"
+    "url": "https://github.com/OzzyPsycko/MMM-HistoricalFacts/issues"
   },
-  "homepage": "https://github.com/cowboysdude/MMM-History#readme"
+  "homepage": "https://github.com/OzzyPsycko/MMM-HistoricalFacts#readme"
 }
