@@ -27,7 +27,7 @@ Module.register("MMM-HistoricalFacts", {
        },
        
        getStyles: function() {
-           return ["MMM-History.css"];
+           return ["MMM-HistoricalFacts.css"];
        },
 
        // Define start sequence.
