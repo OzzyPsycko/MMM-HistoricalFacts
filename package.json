@@ -1,9 +1,23 @@
 {
-  "name": "MMM-HistoricalFacts",
+  "name": "mmm-history",
   "version": "1.0.0",
-  "description": "Magic Mirror module to display historical facts",
+  "description": "This day in History module for MM2",
+  "main": "MMM-History.js",
   "dependencies": {
-    "axios": "^0.24.0",
-    "cheerio": "^1.0.0-rc.10"
-  }
+    "request": "^2.79.0",
+    "xml2js": "^0.4.17"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/cowboysdude/MMM-History.git"
+  },
+  "author": "Cowboysdude",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/cowboysdude/MMM-History/issues"
+  },
+  "homepage": "https://github.com/cowboysdude/MMM-History#readme"
 }
